@@ -50,3 +50,6 @@
 #ifdef RGB_DI_PIN
     #define RGB_MATRIX_KEYPRESSES // reacts to keypresses
 #endif
+
+#define NO_ACTION_MACRO
+#define NO_ACTION_FUNCTION

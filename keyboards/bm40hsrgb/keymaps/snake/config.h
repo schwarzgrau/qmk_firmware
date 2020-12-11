@@ -45,7 +45,4 @@
 
 #define RGBLIGHT_HUE_STEP 20
 
-#define AUTO_SHIFT_TIMEOUT 150
-
-
 #endif
