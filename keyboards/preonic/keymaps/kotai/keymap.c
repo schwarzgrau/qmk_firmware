@@ -412,7 +412,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case CD_QMK:
           if (record->event.pressed) {
             if (keymap_config.swap_lctl_lgui) {
-              SEND_STRING("cd /Users/igiti/qmk_firmware"); //WIN
+              SEND_STRING("cd /c/Users/igiti/qmk_firmware"); //WIN
               tap_code(KC_ENTER); 
             } else {
               SEND_STRING("cd qmk_firmware");              //MAC
