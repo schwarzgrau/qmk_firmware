@@ -53,6 +53,7 @@ enum layer_number {
   _COLEMAK,
   _LOWER,
   _RAISE,
+  _ADJUST,
   _TVP,
   _TVP2
 };
@@ -72,15 +73,13 @@ enum custom_keycodes {
   TVP2,
   MAKE_H,
   CD_QMK,
-  M_AE,
-  M_UE,
-  M_OE,
-  WURST,
   MS_BTN1,
   WMAIL,
   GMAIL,
-  OSXSNP1,
-  OSXSNP2,
+  SNAP1,
+  SNAP2,
+  GIPHY,
+  OS_SWAP,
   T_TSNP,
   T_SSNP,
   T_UNDO,
@@ -107,6 +106,8 @@ enum custom_keycodes {
 #define RAISE MO(_RAISE)
 #define TVP TO(_TVP)
 #define TVP2 MO(_TVP2)
+#define MSFT_T MT(MOD_LSFT, KC_T)
+#define MSFT_N MT(MOD_RSFT, KC_N)
 
 
 // ╭───────────────────────────────────────────────────────────╮
@@ -179,54 +180,52 @@ int cursorTimeout = 10;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* 
-.┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-.┃ q w e r t y                                               ┃
-.┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-.┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
-.┃   GESC  ┃    1    ┃    2    ┃    3    ┃    4    ┃    5    ┃                   ┃    6    ┃    7    ┃    8    ┃    9    ┃    0    ┃    =    ┃
-.┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-.┃   Tab   ┃    Q    ┃    W    ┃    E    ┃    R    ┃    T    ┃                   ┃    Y    ┃    U    ┃    I    ┃    O    ┃    ;    ┃    -    ┃
-.┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-.┃ CtlCaps ┃    A    ┃    S    ┃    D    ┃    F    ┃    G    ┣━━━━━━━━━┳━━━━━━━━━┫    H    ┃    J    ┃    K    ┃    L    ┃    P    ┃    '    ┃
+ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+ ┃ q w e r t y                                               ┃
+ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+ ┃   GESC  ┃    1    ┃    2    ┃    3    ┃    4    ┃    5    ┃                   ┃    6    ┃    7    ┃    8    ┃    9    ┃    0    ┃    =    ┃
+ ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+ ┃   Tab   ┃    Q    ┃    W    ┃    E    ┃    R    ┃    T    ┃                   ┃    Y    ┃    U    ┃    I    ┃    O    ┃    ;    ┃    -    ┃
+ ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+ ┃ CtlCaps ┃    A    ┃    S    ┃    D    ┃    F    ┃    G    ┣━━━━━━━━━┳━━━━━━━━━┫    H    ┃    J    ┃    K    ┃    L    ┃    P    ┃    "    ┃
  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃  CLICK  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
  ┃ Shift[  ┃    Z    ┃    X    ┃    C    ┃    V    ┃    B    ┣━━━━━━━━━┻━━━━━━━━━┫    N    ┃    M    ┃    ,    ┃    .    ┃    /    ┃ Shift]  ┃
  ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
                                ┃   Alt   ┃   Cmd   ┃  LOWER  ┃  Space  ┃  Enter  ┃  RAISE  ┃  Bspace ┃   Del   ┃  
-                               ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
-*/
-
+                               ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛ */
 [_QWERTY] = LAYOUT( 
-    KC_GESC,  KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                           KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,
-    KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                           KC_Y,     KC_U,     KC_I,     KC_O,     KC_SCLN,  KC_EQL, 
-    KC_LCTL,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,                           KC_H,     KC_J,     KC_K,     KC_L,     KC_P,     KC_QUOT, 
-    SFT_T(KC_LBRC),KC_Z,KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,    MS_BTN1,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  SFT_T(KC_RBRC), 
-                                  KC_LALT,  KC_LGUI,  LOWER,    KC_SPC,     KC_ENT,   RAISE,    KC_BSPC,  KC_DEL
+//╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+   KC_GESC,  KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,
+   KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_SCLN,  KC_EQL, 
+   KC_LCTL,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     KC_P,     KC_DQT, 
+SFT_T(KC_LBRC),KC_Z,   KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,  MS_BTN1,  KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  SFT_T(KC_RBRC), 
+                                 KC_LALT,  KC_LGUI,  LOWER,    KC_SPC,   KC_ENT,   RAISE,    KC_BSPC,  KC_DEL
   ),
 /*
   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
-.┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-.┃ c o l e m a k                                             ┃
-.┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-.┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
-.┃   GESC  ┃    1    ┃    2    ┃    3    ┃    4    ┃    5    ┃                   ┃    6    ┃    7    ┃    8    ┃    9    ┃    0    ┃    =    ┃
-.┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-.┃   Tab   ┃    Q    ┃    W    ┃    F    ┃    P    ┃    G    ┃                   ┃    J    ┃    L    ┃    U    ┃    Y    ┃    ;    ┃    -    ┃
-.┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-.┃ CtlCaps ┃    A    ┃    R    ┃    S    ┃    T    ┃    D    ┣━━━━━━━━━┳━━━━━━━━━┫    H    ┃    N    ┃    E    ┃    I    ┃    O    ┃    '    ┃
+ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+ ┃ c o l e m a k                                             ┃
+ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+ ┃   GESC  ┃    1    ┃    2    ┃    3    ┃    4    ┃    5    ┃                   ┃    6    ┃    7    ┃    8    ┃    9    ┃    0    ┃    =    ┃
+ ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+ ┃   Tab   ┃    Q    ┃    W    ┃    F    ┃    P    ┃    G    ┃                   ┃    J    ┃    L    ┃    U    ┃    Y    ┃    ;    ┃    -    ┃
+ ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+ ┃ CtlCaps ┃    A    ┃    R    ┃    S    ┃    T    ┃    D    ┣━━━━━━━━━┳━━━━━━━━━┫    H    ┃    N    ┃    E    ┃    I    ┃    O    ┃    "    ┃
  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃  CLICK  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
  ┃ Shift[  ┃    Z    ┃    X    ┃    C    ┃    V    ┃    B    ┣━━━━━━━━━┻━━━━━━━━━┫    K    ┃    M    ┃    ,    ┃    .    ┃    /    ┃ Shift]  ┃
  ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
                                ┃   Alt   ┃   Cmd   ┃  LOWER  ┃  Space  ┃  Enter  ┃  RAISE  ┃  Bspace ┃   Del   ┃  
-                               ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
-*/
-
+                               ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛ */
 [_COLEMAK] = LAYOUT( 
-    KC_GESC,  KC_1,     KC_2,     KC_3,     KC_3,     KC_5,                           KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,
-    KC_TAB,   KC_Q,     KC_W,     KC_F,     KC_P,     KC_G,                           KC_J,     KC_L,     KC_U,     KC_Y,     KC_SCLN,  KC_EQL, 
-    KC_LCTL,  KC_A,     KC_R,     KC_S,     KC_T,     KC_D,                           KC_H,     KC_N,     KC_E,     KC_I,     KC_O,     KC_QUOT, 
-    SFT_T(KC_LBRC),KC_Z,KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,    MS_BTN1,  KC_K,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  SFT_T(KC_RBRC), 
-                                  KC_LALT,  KC_LGUI,  LOWER,    KC_SPC,     KC_ENT,   RAISE,    KC_BSPC,  KC_DEL
+//╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+   KC_GESC,  KC_1,     KC_2,     KC_3,     KC_3,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,
+   KC_TAB,   KC_Q,     KC_W,     KC_F,     KC_P,     KC_G,                         KC_J,     KC_L,     KC_U,     KC_Y,     KC_SCLN,  KC_EQL, 
+   KC_LCTL,  KC_A,     KC_R,     KC_S,     MSFT_T,   KC_D,                         KC_H,     MSFT_N,   KC_E,     KC_I,     KC_O,     KC_QUOT, 
+SFT_T(KC_LBRC),KC_Z,   KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,  MS_BTN1,  KC_K,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  SFT_T(KC_RBRC), 
+                                 KC_LALT,  KC_LGUI,  LOWER,    KC_SPC,   KC_ENT,   RAISE,    KC_BSPC,  KC_DEL
   ),
 /*
   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -235,56 +234,77 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ┃ l o w e r                                                 ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛  
   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
-  ┃  Reset  ┃    F1   ┃    F2   ┃    F3   ┃    F4   ┃    F5   ┃                   ┃    F6   ┃    F7   ┃    F8   ┃    F9   ┃   F10   ┃   F11   ┃
+  ┃  CAPSL  ┃    F1   ┃    F2   ┃    F3   ┃    F4   ┃    F5   ┃                   ┃    F6   ┃    F7   ┃    F8   ┃    F9   ┃   F10   ┃   F11   ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃  Make   ┃         ┃         ┃    UP   ┃         ┃  print  ┃                   ┃    7    ┃    8    ┃    9    ┃         ┃ RECstop ┃   F12   ┃
+  ┃         ┃         ┃         ┃   UP    ┃    =    ┃    {    ┃                   ┃    }    ┃    +    ┃    7    ┃    8    ┃    9    ┃   F12   ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃ QMKpath ┃         ┃   LFT   ┃   DWN   ┃   RGT   ┃         ┣━━━━━━━━━┳━━━━━━━━━┫    4    ┃    5    ┃    6    ┃         ┃   REC1  ┃   PLY1  ┃
-  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃ OSXSNP1 ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃   TVP   ┃         ┃         ┃   PUP   ┃   PDN   ┃         ┣━━━━━━━━━┻━━━━━━━━━┫    1    ┃    2    ┃    3    ┃         ┃   REC2  ┃   PLY2  ┃
+  ┃         ┃         ┃  LEFT   ┃  DOWN   ┃  RIGHT  ┃    [    ┣━━━━━━━━━┳━━━━━━━━━┫    ]    ┃    -    ┃    4    ┃    5    ┃    6    ┃    '    ┃
+  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃  SNAP1  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+  ┃   TVP   ┃         ┃  PGUP   ┃         ┃  PGDWN  ┃    (    ┣━━━━━━━━━┻━━━━━━━━━┫    )    ┃    *    ┃    1    ┃    2    ┃    3    ┃         ┃
   ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
-                                ┃  VDWN   ┃   VUP   ┃         ┃  PLAY   ┃         ┃  WIN    ┃    0    ┃         ┃  
-                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
-*/
-
+                                ┃  VDWN   ┃   VUP   ┃         ┃  PLAY   ┃         ┃         ┃    =    ┃    0    ┃  
+                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛ */
 [_LOWER] = LAYOUT(
-    RESET,    KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,                        KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,
-    MAKE_H,   XXXXXXX,  XXXXXXX,  KC_UP,    XXXXXXX,  KC_PSCR,                      KC_P7,    KC_P8,    KC_P9,    XXXXXXX,  DM_RSTP,  KC_F12, 
-    CD_QMK,   XXXXXXX,  KC_LEFT,  KC_DOWN,  KC_RGHT,  XXXXXXX,                      KC_P4,    KC_P5,    KC_P6,    XXXXXXX,  DM_REC1,  DM_PLY1, 
-    TVP,      XXXXXXX,  XXXXXXX,  KC_PGUP,  KC_PGDN,  XXXXXXX,  XXXXXXX,  OSXSNP1,  KC_P1,    KC_P2,    KC_P3,    XXXXXXX,  DM_REC2,  DM_PLY2,    
-                                  KC_VOLD,  KC_VOLU,  _______,  KC_MPLY,  _______,  LCG_SWP,  KC_P0,    XXXXXXX
+//╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+   KC_CAPS,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,                        KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,
+   XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_UP,    KC_EQL,   KC_LCBR,                      KC_RCBR,  KC_PLUS,  KC_P7,    KC_P8,    KC_P9,    KC_F12, 
+   XXXXXXX,  XXXXXXX,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_LBRC,                      KC_RBRC,  KC_MINS,  KC_P4,    KC_P5,    KC_P6,    KC_QUOT, 
+   TVP,      XXXXXXX,  KC_PGUP,  XXXXXXX,  KC_PGDN,  KC_LPRN,  XXXXXXX,  SNAP1,    KC_RPRN,  KC_PAST,  KC_P1,    KC_P2,    KC_P3,    _______,    
+                                 KC_VOLD,  KC_VOLU,  _______,  KC_MPLY,  _______,  _______,  KC_EQL,   KC_P0
   ),
 /*
   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
-
- 
   ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ r a i s e                                                 ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
-  ┃  QWERTY ┃    F1   ┃    F2   ┃    F3   ┃    F4   ┃    F5   ┃                   ┃    F6   ┃    F7   ┃    F8   ┃    F9   ┃   F10   ┃   F11   ┃
+  ┃  CAPSL  ┃    F1   ┃    F2   ┃    F3   ┃    F4   ┃    F5   ┃                   ┃    F6   ┃    F7   ┃    F8   ┃    F9   ┃   F10   ┃   F11   ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃ COLEMAK ┃         ┃         ┃    EU   ┃         ┃         ┃                   ┃   YEN   ┃    Ü    ┃         ┃    Ö    ┃         ┃   F12   ┃
+  ┃         ┃    !    ┃    @    ┃    #    ┃    $    ┃    %    ┃                   ┃    ˆ    ┃    &    ┃    Ü    ┃   YEN   ┃         ┃   F12   ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃   GMX   ┃    Ä    ┃    SZ   ┃         ┃         ┃         ┣━━━━━━━━━┳━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
-  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃ OSXSNP2 ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃   WEB   ┃         ┃         ┃   CUE   ┃         ┃         ┣━━━━━━━━━┻━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
+  ┃   GMX   ┃    Ä    ┃         ┃    SZ   ┃         ┃    $    ┣━━━━━━━━━┳━━━━━━━━━┫         ┃         ┃   EU    ┃    £    ┃    Ö    ┃         ┃
+  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃  SNAP2  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+  ┃   WEB   ┃         ┃         ┃   CUE   ┃         ┃         ┣━━━━━━━━━┻━━━━━━━━━┫         ┃         ┃         ┃ DM REC1 ┃ DM STOP ┃ DM PLY1 ┃
   ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
-                                ┃         ┃         ┃         ┃         ┃         ┃         ┃         ┃         ┃  
-                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
- */
-
+                                ┃  GIPHY  ┃         ┃         ┃         ┃         ┃         ┃         ┃         ┃  
+                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛ */
 [_RAISE] = LAYOUT(
-    QWERTY,   KC_F1,    KC_F2,    KC_F3,      KC_F4,    KC_F5,                        KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11, 
-    COLEMAK,  XXXXXXX,  XXXXXXX,  S(LALT(KC_2)),XXXXXXX,XXXXXXX,                      LALT(KC_Y),M_UE,    XXXXXXX,  M_OE,     XXXXXXX,  KC_F12, 
-    GMAIL,    M_AE,     LALT(KC_S),XXXXXXX,   XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  LALT(KC_3),XXXXXXX, 
-    WMAIL,    XXXXXXX,  XXXXXXX,  LALT(KC_C), XXXXXXX,  XXXXXXX,  XXXXXXX,  OSXSNP2,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_BSLS,  XXXXXXX, 
-                                  XXXXXXX,    XXXXXXX,  LCG_NRM,  XXXXXXX,  _______,  _______,  XXXXXXX,  XXXXXXX
+//╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+   KC_CAPS,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,                        KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11, 
+   XXXXXXX,  XXXXXXX,  XXXXXXX,  S(LALT(KC_2)),XXXXXXX,XXXXXXX,                    XXXXXXX,  XXXXXXX,  RALT(KC_U), RALT(KC_Y),XXXXXXX, XXXXXXX, 
+   GMAIL,    RALT(KC_A),XXXXXXX, LALT(KC_S), XXXXXXX, XXXXXXX,                     XXXXXXX,  XXXXXXX,  RALT(KC_5), XXXXXXX, RALT(KC_O), XXXXXXX,
+   WMAIL,    XXXXXXX,  XXXXXXX,  RALT(KC_C), XXXXXXX, XXXXXXX, XXXXXXX,  SNAP2,    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_BSLS,  XXXXXXX, 
+                                 GIPHY,    XXXXXXX,  _______,  _______,  _______,  _______,  XXXXXXX,  XXXXXXX
   ),
 /*
   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
+
+  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+  ┃ a d j u s t                                               ┃
+  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+  ┃  RESET  ┃  DEBUG  ┃         ┃         ┃         ┃         ┃                   ┃         ┃         ┃         ┃         ┃         ┃ QWERTY  ┃
+  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+  ┃  MAKE   ┃         ┃         ┃         ┃         ┃         ┃                   ┃         ┃         ┃         ┃         ┃         ┃ COLEMAK ┃
+  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+  ┃  CD QMK ┃         ┃         ┃         ┃         ┃         ┣━━━━━━━━━┳━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
+  ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃         ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+  ┃ OS SWAP ┃         ┃         ┃         ┃         ┃         ┣━━━━━━━━━┻━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
+  ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
+                                ┃         ┃         ┃         ┃         ┃         ┃         ┃         ┃         ┃  
+                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛ */
+[_ADJUST] = LAYOUT(
+//╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+   RESET,    DEBUG,    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  QWERTY, 
+   MAKE_H,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  COLEMAK,
+   CD_QMK,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+   OS_SWAP,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+                                 XXXXXXX,  XXXXXXX,  _______,  _______,  _______,  _______,  XXXXXXX,  XXXXXXX
+  ),
+/*
+  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
  
   ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -293,22 +313,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓                   ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
   ┃         ┃         ┃ DJVlast ┃   DJV   ┃ DJVnext ┃ Mirror  ┃                   ┃         ┃         ┃         ┃         ┃         ┃         ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃   TAB   ┃ PickLyr ┃  MarkIn ┃  Rotate ┃ MarkOut ┃ ShwSnap ┃                   ┃         ┃         ┃         ┃         ┃         ┃         ┃
+  ┃   TAB   ┃  Flip   ┃  MarkIn ┃  Rotate ┃ MarkOut ┃ ShwSnap ┃                   ┃         ┃         ┃         ┃         ┃         ┃         ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃  Shift  ┃ TG LgTa ┃  Left   ┃   Pan   ┃  Right  ┃  Play   ┣━━━━━━━━━┳━━━━━━━━━┫  TLGRM  ┃  BASE   ┃         ┃         ┃         ┃         ┃
+  ┃  TVP2   ┃ TG LgTa ┃  Left   ┃   Pan   ┃  Right  ┃  Play   ┣━━━━━━━━━┳━━━━━━━━━┫  TLGRM  ┃  BASE   ┃         ┃         ┃         ┃         ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃         ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃   TVP2  ┃ Fullscr ┃  Copy   ┃  Delete ┃  Paste  ┃IMark/Clr┣━━━━━━━━━┻━━━━━━━━━┫         ┃  NEXT   ┃  LAST   ┃         ┃         ┃         ┃
+  ┃  Shift  ┃ Fullscr ┃  Copy   ┃  Delete ┃  Paste  ┃IMark/Clr┣━━━━━━━━━┻━━━━━━━━━┫         ┃  NEXT   ┃  LAST   ┃         ┃         ┃         ┃
   ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
                                 ┃Transform┃  Move   ┃  Select ┃Undo/Save┃ PLY/PSE ┃  MUTE   ┃  VOLUP  ┃  VOLDN  ┃  
-                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
- */
-
+                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛ */
 [_TVP] = LAYOUT(
-    XXXXXXX,  XXXXXXX,  KC_PGUP,  T_DJV,    KC_PGDN,  KC_LBRC,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    KC_TAB,   KC_W,     S(KC_X),  C(KC_LALT),S(KC_Y), T_SSNP,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
-    KC_LSFT,  C(KC_L),  KC_LEFT,  KC_LALT,  KC_RIGHT, KC_SPC,                       T_TELE,   BASE,     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
-    TVP2,     KC_J,     C(KC_C),  KC_BSPC,  C(KC_V),  T_IMARK,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MNXT,  KC_MPRV,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
-                                  T_TRSFM,  T_MOVE,   T_SELECT,  T_UNDO,  KC_MPLY,  KC_MUTE,  KC_VOLU,  KC_VOLD
+//╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+   XXXXXXX,  XXXXXXX,  KC_PGUP,  T_DJV,    KC_PGDN,  KC_LBRC,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+   KC_TAB,   KC_W,     KC_I,     C(KC_LALT),KC_O,    T_SSNP,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+   TVP2,     C(KC_L),  KC_LEFT,  KC_LALT,  KC_RIGHT, KC_SPC,                       T_TELE,   BASE,     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+   KC_LSFT,  KC_J,     C(KC_C),  KC_BSPC,  C(KC_V),  T_IMARK,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_MNXT,  KC_MPRV,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+                                 T_TRSFM,  T_MOVE,   T_SELECT, T_UNDO,   KC_MPLY,  KC_MUTE,  KC_VOLU,  KC_VOLD
   ),
 /*
   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -322,20 +341,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
   ┃         ┃         ┃  TgMin  ┃  RstRot ┃  TgMout ┃  Snap   ┃                   ┃         ┃         ┃         ┃         ┃         ┃         ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫                   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃         ┃Solo/TgSk┃  LstK   ┃  NewK   ┃  NxtK   ┃  Enter  ┣━━━━━━━━━┳━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
+  ┃   ---   ┃Solo/TgSk┃  LstK   ┃  NewK   ┃  NxtK   ┃  Enter  ┣━━━━━━━━━┳━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
   ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫   XXX   ┃         ┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
-  ┃   ---   ┃  FSapp  ┃ CPY2bru ┃  DelHd  ┃ PSTinPL ┃BMark/Clr┣━━━━━━━━━┻━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
+  ┃         ┃  FSapp  ┃ CPY2bru ┃  DelHd  ┃ PSTinPL ┃BMark/Clr┣━━━━━━━━━┻━━━━━━━━━┫         ┃         ┃         ┃         ┃         ┃         ┃
   ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
-                                ┃  Warp   ┃  Flip   ┃  BASE   ┃Redo/Sav1┃         ┃         ┃         ┃         ┃  
-                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
- */
-
+                                ┃  Warp   ┃  PickL  ┃  BASE   ┃Redo/Sav1┃         ┃         ┃         ┃         ┃  
+                                ┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛ */
 [_TVP2] = LAYOUT(
-    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_RBRC,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    XXXXXXX,  XXXXXXX, S(C(KC_X)),S(KC_HOME),S(C(KC_Y)),T_TSNP,                     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
-    XXXXXXX,  T_SOLO,   S(KC_LEFT),T_NKEY,  S(KC_RIGHT),KC_ENT,                     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
-    _______,  S(KC_J),  S(KC_C),  T_DKEY,   S(KC_V),  T_BMARK,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
-                                  T_WARP,   S(KC_P),  BASE,  T_REDO,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX
+//╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
+   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_RBRC,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+   XXXXXXX,  XXXXXXX,  S(KC_I),  S(KC_HOME),S(KC_O), T_TSNP,                     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+   _______,  T_SOLO,   S(KC_LEFT),T_NKEY,  S(KC_RIGHT),KC_ENT,                     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+   XXXXXXX,  S(KC_J),  S(KC_C),  T_DKEY,   S(KC_V),  T_BMARK,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+                                 T_WARP,   KC_P,     BASE,     T_REDO,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX
   )
 
 //▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -348,7 +366,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 // ▐███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌
 
-char a_keys[6][4][24] = {
+char a_keys[7][4][24] = {
 /*
 .┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 .┃ q w e r t y                                      ┃
@@ -430,9 +448,9 @@ char a_keys[6][4][24] = {
 .                   ┗━━━━━━━━━━━┛
 */
 [_TVP]  =  {
-              SS_DOWN(X_LSFT) SS_LCTL("a") SS_UP(X_LSFT),
-  SS_DOWN(X_LSFT) SS_TAP(X_BSPC) SS_UP(X_LSFT),              SS_DOWN(X_LSFT) SS_LCTL("d") SS_LCTL("p") SS_UP(X_LSFT),
-              SS_DOWN(X_LSFT) SS_LCTL("n") SS_UP(X_LSFT)
+              SS_DOWN(X_LALT) SS_LCTL("a") SS_UP(X_LALT),
+  SS_DOWN(X_LSFT) SS_TAP(X_BSPC) SS_UP(X_LSFT),              SS_LSFT("d"),
+              SS_DOWN(X_LALT) SS_LCTL("n") SS_UP(X_LALT)
             },
 /*
 .┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -451,8 +469,24 @@ char a_keys[6][4][24] = {
             "left5",              "right5",
                         "down5"
             },
+/*
+.┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+.┃ a d j u s t                                      ┃
+.┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+.                   ┏━━━━━━━━━━━┓
+.                   ┃           ┃
+.       ┏━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┓
+.       ┃           ┃           ┃           ┃
+.       ┗━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┛
+.                   ┃           ┃
+.                   ┗━━━━━━━━━━━┛
+*/
+[_ADJUST]  =  {
+                        "up5",
+            "left5",              "right5",
+                        "down5"
+            },
 };
-
 
 
 // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -536,7 +570,8 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
     if (dmacro_num < 1) {
       strcpy ( p_text, layer_state_str );
     }
-  return state;
+  //return state;
+    return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
 
 void matrix_scan_user(void) {
@@ -811,7 +846,7 @@ bool t_deselect_brush(void) {
   #ifdef HAPTIC_ENABLE
     DRV_pulse(transition_rampdown_short_smooth1_50);
   #endif // HAPTIC
-  SEND_STRING(SS_LCTL("d"));
+  SEND_STRING("d");
   SEND_STRING("b");
   return false;
 
@@ -845,10 +880,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           } 
           break;
 
+      case OS_SWAP: 
+          if (record->event.pressed) {
+              if (!keymap_config.swap_lctl_lgui) {
+                keymap_config.swap_lctl_lgui = true;  //WIN
+                //PLAY_SONG(winxp_song);
+                }
+               else {
+                 keymap_config.swap_lctl_lgui = false; //MAC
+                 //PLAY_SONG(mac_song);
+                }
+          eeconfig_update_keymap(keymap_config.raw);
+          clear_keyboard();  // clear to prevent stuck keys    
+          return false;
+          }
+
       case BASE:
           if (record->event.pressed) {
             layer_off(_TVP);
-            SEND_STRING(SS_TAP(X_F18)); //hammerspoon indicator
             #ifdef HAPTIC_ENABLE
               DRV_pulse(pulsing_strong);
             #endif // HAPTIC
@@ -857,11 +906,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
       case TVP:
           if (record->event.pressed) {
-            SEND_STRING(SS_TAP(X_F17)); //hammerspoon indicator
             #ifdef HAPTIC_ENABLE
               DRV_pulse(transition_hum);
             #endif // HAPTIC
-            //SEND_STRING (SS_LCTL(SS_LSFT(SS_LALT(SS_LGUI("t")))));
+            if (keymap_config.swap_lctl_lgui) {
+                                                                    //WIN
+            } else {
+              SEND_STRING (SS_LSFT(SS_LALT(SS_LGUI("t"))));         //MAC
+            }
           } 
           break;
 
@@ -878,45 +930,51 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
       case CD_QMK:
           if (record->event.pressed) {
-            SEND_STRING ("cd /Users/schwarygrau/qmk_firmware");
-            register_code(KC_ENTER);
-            unregister_code(KC_ENTER);
+            if (keymap_config.swap_lctl_lgui) {
+              SEND_STRING("cd /Users/igiti/qmk_firmware"); //WIN
+              tap_code(KC_ENTER); 
+            } else {
+              SEND_STRING("cd qmk_firmware");              //MAC
+              tap_code(KC_ENTER); 
+            }
           } 
           break;
 
-      case M_AE:
+      case SNAP1:
           if (record->event.pressed) {
-            SEND_STRING(SS_LSFT("'")"a");  
+            if (keymap_config.swap_lctl_lgui) {
+              SEND_STRING(SS_LWIN(SS_TAP(X_PSCR)));         //WIN
+            } else {
+              SEND_STRING(SS_LSFT(SS_LCMD("4")));           //MAC
+            }
           }
           break;
 
-      case M_UE:
+      case SNAP2:
           if (record->event.pressed) {
-            SEND_STRING(SS_LSFT("'")"u");  
-          }
-          break;
-
-      case M_OE:
-          if (record->event.pressed) {
-            SEND_STRING(SS_LSFT("'")"o");  
-          }
-          break;
-
-      case OSXSNP1:
-          if (record->event.pressed) {
-            SEND_STRING(SS_LSFT(SS_LCMD("4"))); 
-          }
-          break;
-
-      case OSXSNP2:
-          if (record->event.pressed) {
-            SEND_STRING(SS_LSFT(SS_LCMD(SS_LCTL("4")))); 
+            if (keymap_config.swap_lctl_lgui) {
+              SEND_STRING(SS_LSFT(SS_LWIN("S")));           //WIN
+            } else {
+              SEND_STRING(SS_LSFT(SS_LCMD(SS_LCTL("4"))));  //MAC
+            }
           }
           break;
 
       case WMAIL:
           if (record->event.pressed) {
             SEND_STRING ("igit.igit@web.de");
+          } 
+          break;
+
+      case GMAIL:
+          if (record->event.pressed) {
+            SEND_STRING ("igit@gmx.de");
+          }
+        break;
+
+      case GIPHY:
+          if (record->event.pressed) {
+            SEND_STRING ("@gif ");
           } 
           break;
 
@@ -935,20 +993,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
         break;
 
-      case GMAIL:
-          if (record->event.pressed) {
-            SEND_STRING ("igit@gmx.de");
-          }
-        break;
-
       case T_TSNP:
         if (record->event.pressed) {
-          SEND_STRING (SS_LCTL(SS_LALT(SS_LGUI("8"))));
           #ifdef HAPTIC_ENABLE
             DRV_pulse(strong_click);
           #endif // HAPTIC
           SEND_STRING (SS_LSFT("f"));
-          SEND_STRING (SS_LCTL(SS_LALT(SS_LGUI("8"))));
         } else {
           //SEND_STRING ("j");
           }
@@ -963,11 +1013,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           break;
 
       case T_UNDO: { 
-          return replace_on_hold_int("u", SS_LSFT("s"), 1000, record->event.pressed); 
+          return replace_on_hold_int("u", SS_LCTL("s"), 1000, record->event.pressed); 
         }
 
       case T_REDO: { 
-          return replace_on_hold_int(SS_LSFT("u"), SS_LSFT(SS_LCTL("s")), 1000, record->event.pressed); 
+          return replace_on_hold_int(SS_LSFT("u"), SS_LSFT("s"), 1000, record->event.pressed); 
         }
 
       case T_SOLO: { 
@@ -980,21 +1030,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
       case T_NKEY: { 
-          return replace_on_hold_int(SS_LSFT("k"), SS_LSFT(SS_LCTL("k")), 1000, record->event.pressed); 
+          return replace_on_hold_int("k", SS_LSFT("k"), 1000, record->event.pressed); 
         }
 
       case T_DKEY: { 
-          return replace_on_hold_int("g", SS_LSFT(SS_LCTL("g")), 1000, record->event.pressed); 
+          return replace_on_hold_int("g", SS_LSFT("g"), 1000, record->event.pressed); 
         }
 
       case T_BMARK: { 
-          return replace_on_hold_int(SS_LSFT(SS_LCTL(SS_TAP(X_PGUP))), SS_LSFT(SS_LCTL(SS_TAP(X_PGDN))), 1000, record->event.pressed); 
+          return replace_on_hold_int(SS_LCTL("b"), SS_LSFT("b"), 1000, record->event.pressed); 
         }
 
       case T_SELECT:
         if (record->event.pressed) {
           if( !t_selection ) {
-            SEND_STRING(SS_TAP(X_F19)); //hammerspoon indicator
+            //SEND_STRING(SS_TAP(X_F19)); //hammerspoon indicator
             SEND_STRING ("h");
             #ifdef HAPTIC_ENABLE
               DRV_pulse(transition_rampup_short_smooth1_50);
@@ -1010,7 +1060,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case T_MOVE:
         if (record->event.pressed) {
           if( !t_moved ) {
-            SEND_STRING(SS_TAP(X_F20)); //hammerspoon indicator
+            //SEND_STRING(SS_TAP(X_F20)); //hammerspoon indicator
             SEND_STRING (SS_LCTL("p"));
             t_moved = true;
           }
@@ -1035,7 +1085,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
       case T_WARP:
         if (record->event.pressed) {
-            SEND_STRING (SS_LSFT(SS_LCTL("w")));
+            SEND_STRING (SS_LCTL("w"));
             t_transform = true;
           }
         break;
@@ -1043,11 +1093,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case T_DJV:
         if (record->event.pressed) {
           if( !t_djvplayer ) {
-            SEND_STRING (SS_LCTL(SS_LSFT(SS_LALT(SS_LGUI("d")))));
+            SEND_STRING (SS_LSFT(SS_LALT(SS_LGUI("d"))));
             t_djvplayer = true;
           }
           else {
-            SEND_STRING (SS_LCTL(SS_LSFT(SS_LALT(SS_LGUI("t")))));
+            SEND_STRING (SS_LSFT(SS_LALT(SS_LGUI("t"))));
             t_djvplayer = false;
           }
         }
@@ -1055,7 +1105,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
       case T_TELE:
           if (record->event.pressed) {
-            SEND_STRING (SS_LCTL(SS_LSFT(SS_LALT(SS_LGUI("e")))));
+            SEND_STRING (SS_LSFT(SS_LALT(SS_LGUI("e"))));
             layer_off(_TVP);
             #ifdef HAPTIC_ENABLE
               DRV_pulse(pulsing_strong);
@@ -1065,6 +1115,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
   return true;
 }
+
+
 
 /* ▐███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌
 .

@@ -50,6 +50,6 @@
 
 #define TAPPING_TERM_PER_KEY
 #define TAPPING_TERM 200
-
+//#define IGNORE_MOD_TAP_INTERRUPT
 
 #endif
