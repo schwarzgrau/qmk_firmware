@@ -350,7 +350,7 @@ SFT_T(KC_LBRC),KC_Z,   KC_X,     KC_C,     KC_V,     KC_B,     XXXXXXX,  MS_BTN1
 [_TVP2] = LAYOUT(
 //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_RBRC,                      XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-   XXXXXXX,  XXXXXXX,  S(KC_I),  S(KC_HOME),S(KC_O), T_TSNP,                     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
+   XXXXXXX,  XXXXXXX,  S(KC_I),  S(KC_HOME),S(KC_O), T_TSNP,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
    _______,  T_SOLO,   S(KC_LEFT),T_NKEY,  S(KC_RIGHT),KC_ENT,                     XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
    XXXXXXX,  S(KC_J),  S(KC_C),  T_DKEY,   S(KC_V),  T_BMARK,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, 
                                  T_WARP,   KC_P,     BASE,     T_REDO,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX
@@ -448,9 +448,9 @@ char a_keys[7][4][24] = {
 .                   ┗━━━━━━━━━━━┛
 */
 [_TVP]  =  {
-              SS_DOWN(X_LALT) SS_LCTL("a") SS_UP(X_LALT),
+                    SS_LCTL("a"),
   SS_DOWN(X_LSFT) SS_TAP(X_BSPC) SS_UP(X_LSFT),              SS_LSFT("d"),
-              SS_DOWN(X_LALT) SS_LCTL("n") SS_UP(X_LALT)
+                   SS_LCTL("n")
             },
 /*
 .┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
